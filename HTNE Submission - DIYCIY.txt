@@ -1,0 +1,701 @@
+In order to run our program, you must create a package called cs1 with the Keyboard class inside of it. 
+
+Below is the Keyboard class: 
+package cs1; 
+import java.io.*;
+import java.util.*;
+
+
+public class Keyboard 
+{
+    //*************  Error Handling Section  **************************
+
+    private static boolean printErrors = true;
+    private static int errorCount = 0;
+
+    //-----------------------------------------------------------------
+    //  Returns the current error count.
+    //-----------------------------------------------------------------
+    public static int getErrorCount() {
+        return errorCount;
+    }
+
+    //-----------------------------------------------------------------
+    //  Resets the current error count to zero.
+    //-----------------------------------------------------------------
+    public static void resetErrorCount(int count) {
+        errorCount = 0;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a boolean indicating whether input errors are
+    //  currently printed to standard output.
+    //-----------------------------------------------------------------
+    public static boolean getPrintErrors() {
+        return printErrors;
+    }
+
+    //-----------------------------------------------------------------
+    //  Sets a boolean indicating whether input errors are to be
+    //  printed to standard output.
+    //-----------------------------------------------------------------
+    public static void setPrintErrors(boolean flag) {
+        printErrors = flag;
+    }
+
+    //-----------------------------------------------------------------
+    //  Increments the error count and prints the error message if
+    //  appropriate.
+    //-----------------------------------------------------------------
+    private static void error(String str)  
+    {  
+        errorCount++;
+        if (printErrors) {
+            System.out.println(str);
+        }
+    }
+
+
+    //*************  Tokenized Input Stream Section  ******************
+
+    private static String current_token = null;
+    private static StringTokenizer reader;
+    private static BufferedReader in 
+        = new BufferedReader (new InputStreamReader(System.in));
+
+    //-----------------------------------------------------------------
+    //  Gets the next input token assuming it may be on subsequent
+    //  input lines.
+    //-----------------------------------------------------------------
+    private static String getNextToken() {
+        return getNextToken(true);
+    }
+
+    //-----------------------------------------------------------------
+    //  Gets the next input token, which may already have been read.
+    //-----------------------------------------------------------------
+    private static String getNextToken(boolean skip) 
+    {  
+        String token;
+        if (current_token == null) {  
+            token = getNextInputToken(skip);
+        }
+        else
+        {  
+            token = current_token;
+            current_token = null;
+        }
+
+        return token;
+    }
+
+    //-----------------------------------------------------------------
+    //  Gets the next token from the input, which may come from the
+    //  current input line or a subsequent one. The parameter
+    //  determines if subsequent lines are used.
+    //-----------------------------------------------------------------
+    private static String getNextInputToken(boolean skip) 
+    {  
+        final String delimiters = " \t\n\r\f";
+        String token = null;
+        try 
+        {  
+            if (reader == null) { 
+                reader = new StringTokenizer(in.readLine(), delimiters, true);
+            }
+
+            while (token == null || ((delimiters.indexOf (token) >= 0) && skip))
+            {  
+                while ( !reader.hasMoreTokens() ) {
+                    reader = new StringTokenizer(in.readLine(),delimiters,true);
+                }
+                
+                token = reader.nextToken();
+            }
+        }
+        catch (Exception exception) {
+            token = null;
+        }
+
+        return token;
+
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns true if there are no more tokens to read on the
+    //  current input line.
+    //-----------------------------------------------------------------
+    public static boolean endOfLine() {
+        return !reader.hasMoreTokens();
+    }
+
+
+    //*************  Reading Section  *********************************
+
+    //-----------------------------------------------------------------
+    //  Returns a string read from standard input.
+    //-----------------------------------------------------------------
+    public static String readString() 
+    {  
+        String str;
+        try 
+        {  
+            str = getNextToken(false);
+            while ( !endOfLine() ) {  
+                str = str + getNextToken(false);
+            }
+
+        }
+        catch (Exception exception) 
+        {  
+            error("Error reading String data, null value returned.");
+            str = null;
+        }
+
+        return str;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a space-delimited substring (a word) read from
+    //  standard input.
+    //-----------------------------------------------------------------
+    public static String readWord() 
+    {  
+        String token;
+        try {  
+            token = getNextToken();
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading String data, null value returned.");
+            token = null;
+        }
+
+        return token;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a boolean read from standard input.
+    //-----------------------------------------------------------------
+    public static boolean readBoolean() 
+    {  
+        String token = getNextToken();
+        boolean bool;
+        try
+        {  
+            if (token.toLowerCase().equals("true")) {
+                bool = true;
+            }
+            else if (token.toLowerCase().equals("false")) {
+                bool = false;
+            }
+            else 
+            {  
+                error ("Error reading boolean data, false value returned.");
+                bool = false;
+            }
+        }
+        catch (Exception exception)
+        {  
+            error ("Error reading boolean data, false value returned.");
+            bool = false;
+        }
+
+        return bool;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a character read from standard input.
+    //-----------------------------------------------------------------
+    public static char readChar() 
+    {  
+        String token = getNextToken(false);
+        char value;
+        try 
+        {  
+            if (token.length() > 1) {   
+                current_token = token.substring (1, token.length());
+            }   
+            else { 
+                current_token = null;
+            }
+            
+            value = token.charAt (0);
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading char data, MIN_VALUE value returned.");
+            value = Character.MIN_VALUE;
+        }
+
+        return value;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns an integer read from standard input.
+    //-----------------------------------------------------------------
+    public static int readInt() 
+    {  
+        String token = getNextToken();
+        int value;
+        try {  
+            value = Integer.parseInt (token);
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading int data, MIN_VALUE value returned.");
+            value = Integer.MIN_VALUE;
+        }
+
+        return value;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a long integer read from standard input.
+    //-----------------------------------------------------------------
+    public static long readLong() 
+    {  
+        String token = getNextToken();
+        long value;
+        try {  
+            value = Long.parseLong (token);
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading long data, MIN_VALUE value returned.");
+            value = Long.MIN_VALUE;
+        }
+
+        return value;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a float read from standard input.
+    //-----------------------------------------------------------------
+    public static float readFloat() 
+    {  
+        String token = getNextToken();
+        float value;
+        try {  
+            value = (new Float(token)).floatValue();
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading float data, NaN value returned.");
+            value = Float.NaN;
+        }
+
+        return value;
+    }
+
+    //-----------------------------------------------------------------
+    //  Returns a double read from standard input.
+    //-----------------------------------------------------------------
+    public static double readDouble() 
+    {  
+        String token = getNextToken();
+        double value;
+
+        try {  
+            value = (new Double(token)).doubleValue();
+        } 
+        catch (Exception exception) 
+        {  
+            error ("Error reading double data, NaN value returned.");
+            value = Double.NaN;
+        }
+
+        return value;
+    }
+
+} // end class
+
+
+
+------------------------------------------------------------------------------------
+
+This is the Room class, a parent class needed to run our program: 
+
+package random;
+
+public class Room {
+
+	//all windows used are 6.5 sq ft.
+
+		private String roomName;
+
+		private double length;
+
+		private double width;
+
+		private double height;
+
+		private double windowWidth;
+
+		private double windowHeight;
+
+	private int numWindows;
+
+		
+
+		public Room (String n, double len, double wid, double ht, int nw, double wWidth, double wHeight) {
+
+			roomName = n;
+
+			length = len;
+
+			width = wid;
+
+			height = ht;
+
+			numWindows = nw;
+
+			windowWidth = wWidth;
+
+			windowHeight = wHeight;
+
+		}
+
+		public int numWindows() {
+
+			return numWindows;
+
+		}
+
+		public double AreaOfFloor()
+
+		{ 
+
+	        double AreaOfFloor = length * width;//AreaOfFloor can be used to calculate area of ceiling
+
+	        return AreaOfFloor;
+
+		}
+
+		
+
+		public double AreaOfWalls() {
+
+	   double AreaOfWalls = (2 * height * width) + (2 * height * length) - (numWindows * windowWidth * windowHeight);//Area of Walls is sum of area of 4 walls - area of Window X numWindow	
+
+	   return AreaOfWalls;
+
+	}
+
+				
+
+	public String toString()
+
+		{
+
+			return roomName + "    " + length + " x " + width + " x " + height + "    " + numWindows + " windows";
+
+		}
+
+	}
+
+
+-----------------------------------------------------------------------------------
+
+Finally, here is our main program, which functions as the actual calculator: 
+package random;
+
+import java.util.ArrayList;
+
+import java.util.Scanner;
+
+
+
+import cs1.Keyboard;
+
+
+
+public class InteriorCalculator {
+
+	public static void main(String[] args) {
+
+		Scanner scan = new Scanner(System.in);
+
+		String roomName;
+
+		double length;
+
+		double width;
+
+		double height;	
+
+		int numWindows;
+
+		double windowWidth;
+
+		double windowHeight;
+
+		double randomAreaSize = 0.0;
+
+		double randomWallAreaSize = 0.0;
+
+		boolean cont = true;
+
+		double totalRenCost = 0.0;
+
+		double paintCost = 0.0;
+
+		double houseFloorCost = 0.0;
+
+		double totWindowCost = 0.0;
+
+		double totalLightCost = 0.0;
+
+
+
+		ArrayList<Room> House = new ArrayList<Room>();
+
+		System.out.println("Interior: \n Enter the number of rooms your house has");
+
+		int roomNum = Keyboard.readInt();
+
+		for(int x = 0; x<roomNum; x++) {
+
+			System.out.println("What is the name of room #" + (x+1) + " enter without caps and spaces?");
+
+			roomName = Keyboard.readString();
+
+			System.out.println("What is the length of this room in feet?");
+
+			length =Keyboard.readDouble();
+
+			System.out.println("What is the width of this room in feet?");
+
+			width = Keyboard.readDouble();
+
+			System.out.println("What is the height of this room in feet?");
+
+			height = Keyboard.readDouble();
+
+			System.out.println("How many windows does this room have?");
+
+			numWindows = Keyboard.readInt();
+
+			System.out.println("What are the widths of these windows in feet?");
+
+			windowWidth = Keyboard.readDouble();
+
+			System.out.println("What are the heights of these windows in feet?");
+
+			windowHeight = Keyboard.readDouble();
+
+			House.add(new Room(roomName, length, width, height, numWindows, windowWidth, windowHeight));
+
+
+
+		}
+
+			System.out.println("Are there hallways in your house/any area not covered in rooms Y/N?");
+
+			String response = Keyboard.readString();
+
+			if(response == "Y") {
+
+				System.out.println("What is the total area of the walls here in square feet?");
+
+				randomWallAreaSize = Keyboard.readDouble();
+
+				System.out.println("What is the total size of these areas combined in square feet?");
+
+				randomAreaSize = Keyboard.readDouble();
+
+			}
+
+			String renType;
+
+		do {
+
+			System.out.println("What renovations do you plan on doing today?");
+
+			System.out.println("Enter PAINT, REFLOOR, REPLACEWINDOW, LIGHTFIXTURES");
+
+			renType = Keyboard.readString();
+
+			if( !(renType.equals("PAINT")) && !(renType.equals("REFLOOR")) && !(renType.equals("REPLACEWINDOW")) && !(renType.equals("LIGHTFIXTURES"))) {
+
+				System.out.print("You have not entered a valid renovation. Enter a valid renovation. ");
+
+				do {
+
+					System.out.println("Enter PAINT, REFLOOR, REPLACEWINDOW, LIGHTFIXTURES");
+
+					renType = Keyboard.readString();
+
+				} while ( !(renType.equals("PAINT")) && !(renType.equals("REFLOOR")) && !(renType.equals("REPLACEWINDOW")) && !(renType.equals("LIGHTFIXTURES")));
+
+			}
+
+			if(renType.equals("PAINT")) {
+
+				System.out.println("How much does your paint cost per gallon?");
+
+				double paintPerGal = Keyboard.readDouble();
+
+				double houseWallSize = 0.0;
+
+				for(int x = 0; x<House.size(); x++) {
+
+					houseWallSize += House.get(x).AreaOfWalls();
+
+				}
+
+				paintCost = (houseWallSize/350)*paintPerGal;
+
+				paintCost += (randomWallAreaSize/350)*paintPerGal;
+
+				totalRenCost += paintCost;
+
+				
+
+			}
+
+			else if(renType.equals("REFLOOR")) {
+
+				System.out.println("How much does your new flooring cost per square foot?");
+
+				double flooringPerSquare = Keyboard.readDouble();
+
+				double houseFloorSize = 0.0;
+
+				for(int x = 0; x<House.size(); x++) {
+
+					houseFloorSize += House.get(x).AreaOfFloor();
+
+				}
+
+				houseFloorSize += randomAreaSize;
+
+				houseFloorCost = houseFloorSize * flooringPerSquare;
+
+				totalRenCost += houseFloorCost;
+
+
+
+			}
+
+			else if(renType.equals("REPLACEWINDOW")) {
+
+				System.out.println("How much would each of your new windows cost?");
+
+				double WindowPrice = Keyboard.readDouble();
+
+				int totWindows = 0;
+
+				for(int x = 0; x<House.size(); x++) {
+
+					totWindows += House.get(x).numWindows();
+
+				}
+
+				totWindowCost = totWindows * WindowPrice;
+
+				totalRenCost += totWindowCost;
+
+
+
+				
+
+			}
+
+			else if(renType.equals("LIGHTFIXTURES")) {
+
+				System.out.println("How many light fixtures do you want per room?");
+
+				int fixtures = Keyboard.readInt();
+
+				int totLights = fixtures*House.size();
+
+				System.out.println("How much does each light fixure cost?");
+
+				double lightCost = Keyboard.readDouble();
+
+				totalLightCost += lightCost*totLights;
+
+				totalRenCost += totalLightCost;
+
+
+
+			}
+
+			
+
+			System.out.println("Would you like to add another renovation? (Y/N)");
+
+				String x = Keyboard.readString();
+
+				if (x.equals("N")) {
+
+					cont = false;
+
+				}
+				else if ((!(x.equals("Y")) && (!(x.equals("N") )))) {
+					do {
+
+					System.out.println("Not a valid response!");
+
+					System.out.println("Would you like to add another renovation? (Y/N)");
+
+					x = Keyboard.readString();
+
+					} while ((!(x.equals("Y")) && (!(x.equals("N") ))));
+
+				}
+
+			
+
+		} while (cont == true);
+
+		
+
+		System.out.println("   The price of your paint is: " + paintCost);
+
+		System.out.println("The price of your flooring is: " + houseFloorCost);
+
+		System.out.println(" The price of your windows is: " + totWindowCost);
+
+		System.out.println("The price of your lighting is: " + totalLightCost);
+
+		System.out.println("------------------------------------ ");
+
+		System.out.println("  The total renovation cost is: " + totalRenCost);
+		
+		System.out.println("Would you like to estimate the updated value of the home after the renovation? Y/N");
+		String input = Keyboard.readString(); 
+		double houseCost = 0.0; 
+		double betterHouseCost = 0.0; 
+		double worseHouseCost = 0.0; 
+		if(input.equals("Y"))
+		{
+			System.out.println("What was the pre-renovation value of your home?");
+			houseCost = Keyboard.readDouble(); 
+			System.out.println("Using a website like zillow.com, locate a houes similar to your house in your neighborhood with slightly better feautres (subjective). What is the price of this house?");
+			betterHouseCost = Keyboard.readDouble(); 
+			System.out.println("Using the same website, find another similar house, but objectively a little worse (subjective) in your area. How much does this house cost?");
+			worseHouseCost = Keyboard.readDouble(); 
+			double houseAvg = (betterHouseCost+worseHouseCost) / 2; 
+			if(houseAvg > houseCost)
+			{
+				System.out.println("The value of your home is " + (houseAvg+(.56 * totalRenCost)) + " after the renovation.");
+				System.out.println("Thank you for using our program!");
+
+			}
+			else
+			{
+				System.out.println("The value of your home is " + (houseCost+(.56 * totalRenCost)) + " after the renovation. ");
+				System.out.println("Thank you for using our program!");
+
+			}
+			 
+		}
+		else
+			System.out.println("Thank you for using our program!");
+		
+	}
+}
+
+
