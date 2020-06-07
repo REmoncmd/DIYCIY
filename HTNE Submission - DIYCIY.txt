@@ -1,6 +1,7 @@
-In order to run our program, you must create a package called cs1 with the Keyboard class inside of it. 
+In order to run our program, you must create a package called cs1 with the Keyboard class inside of it. This program should be run in a JAVA Compiler. 
 
 Below is the Keyboard class: 
+
 package cs1; 
 import java.io.*;
 import java.util.*;
